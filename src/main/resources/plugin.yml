@@ -1,0 +1,9 @@
+name: TpHistory
+main: Rice.Chen.TpHistory.TpHistory
+api-version: 1.20
+version: 1.0
+
+commands:
+  tpb:
+    description: 打開傳送歷史界面
+    usage: /<command>
