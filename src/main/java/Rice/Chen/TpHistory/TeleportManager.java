@@ -99,14 +99,27 @@ public class TeleportManager {
         loadPlayerData(playerId);
         
         List<TeleportRecord> history = playerHistory.get(playerId);
-        history.add(0, new TeleportRecord(location));
         
-        while (history.size() > MAX_HISTORY) {
-            history.remove(history.size() - 1);
+        // 檢查是否已存在相同位置的記錄
+        boolean isDuplicate = history.stream().anyMatch(record -> {
+            Location loc = record.getLocation();
+            return loc.getWorld().equals(location.getWorld()) &&
+                loc.getBlockX() == location.getBlockX() &&
+                loc.getBlockY() == location.getBlockY() &&
+                loc.getBlockZ() == location.getBlockZ();
+        });
+        
+        // 如果不是重複位置，才添加新記錄
+        if (!isDuplicate) {
+            history.add(0, new TeleportRecord(location));
+            
+            while (history.size() > MAX_HISTORY) {
+                history.remove(history.size() - 1);
+            }
+            
+            // 即時儲存更改
+            savePlayerData(playerId);
         }
-        
-        // 即時儲存更改
-        savePlayerData(playerId);
     }
     
     public List<TeleportRecord> getPlayerHistory(UUID playerId) {

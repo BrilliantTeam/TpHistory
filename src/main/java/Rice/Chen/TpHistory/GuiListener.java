@@ -331,13 +331,39 @@ public class GuiListener implements Listener {
             return;
         }
         
-        teleportManager.addTeleportRecord(player, to);
+        // 檢查是否已存在相同位置的記錄
+        List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
+        boolean isDuplicate = history.stream().anyMatch(record -> {
+            Location loc = record.getLocation();
+            return loc.getWorld().equals(from.getWorld()) &&
+                loc.getBlockX() == from.getBlockX() &&
+                loc.getBlockY() == from.getBlockY() &&
+                loc.getBlockZ() == from.getBlockZ();
+        });
+
+        if (isDuplicate) {
+        TextComponent message1 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7您進行了傳送，但是此位置已在記錄中，"));
+        TextComponent message2 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7因此不會重複紀錄，點此查看#e6bbf6近期傳送紀錄&7。"));
+        
+        message1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
+        message1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+            new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
+        message2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
+        message2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+            new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
+            
+        player.spigot().sendMessage(message1);
+        player.spigot().sendMessage(message2);
+        return;
+        }
+        
+        teleportManager.addTeleportRecord(player, from);
         
         // 發送可點擊的通知消息
-        TextComponent message = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7已記錄了傳送位置！ &7[點此查看]"));
+        TextComponent message = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7已記錄傳送前的位置，點此查看#e6bbf6近期傳送紀錄&7。"));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-            new ComponentBuilder(translateHexColorCodes("&7點擊打開近十次的傳送紀錄")).create()));
+            new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
         player.spigot().sendMessage(message);
     }
     
