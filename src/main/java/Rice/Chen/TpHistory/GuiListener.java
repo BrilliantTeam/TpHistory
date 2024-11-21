@@ -38,7 +38,7 @@ public class GuiListener implements Listener {
         .put(Biome.OCEAN, new BiomeInfo(Material.WATER_BUCKET, "&1海洋"))
         .put(Biome.DEEP_OCEAN, new BiomeInfo(Material.PRISMARINE_CRYSTALS, "&1深海"))
         .put(Biome.FROZEN_OCEAN, new BiomeInfo(Material.ICE, "&b寒凍海洋"))
-        .put(Biome.DEEP_FROZEN_OCEAN, new BiomeInfo(Material.PACKED_ICE, "&b冰凍深海"))
+        .put(Biome.DEEP_FROZEN_OCEAN, new BiomeInfo(Material.PACKED_ICE, "&b寒凍深海"))
         .put(Biome.COLD_OCEAN, new BiomeInfo(Material.COD, "&b寒冷海洋"))
         .put(Biome.DEEP_COLD_OCEAN, new BiomeInfo(Material.SALMON, "&b寒冷深海"))
         .put(Biome.LUKEWARM_OCEAN, new BiomeInfo(Material.TROPICAL_FISH, "&b溫和海洋"))
@@ -55,14 +55,19 @@ public class GuiListener implements Listener {
         .put(Biome.SUNFLOWER_PLAINS, new BiomeInfo(Material.SUNFLOWER, "&e向日葵平原"))
         .put(Biome.MEADOW, new BiomeInfo(Material.GRASS, "&a草甸"))
         .put(Biome.SNOWY_PLAINS, new BiomeInfo(Material.SNOW_BLOCK, "&f雪原"))
+        .put(Biome.SAVANNA, new BiomeInfo(Material.ACACIA_SAPLING, "&6莽原"))
+        .put(Biome.SAVANNA_PLATEAU, new BiomeInfo(Material.ACACIA_LOG, "&6莽原高地"))
+        .put(Biome.WINDSWEPT_SAVANNA, new BiomeInfo(Material.ACACIA_LEAVES, "&6風蝕莽原"))
 
         // 森林生態域
         .put(Biome.FOREST, new BiomeInfo(Material.OAK_SAPLING, "&2森林"))
         .put(Biome.FLOWER_FOREST, new BiomeInfo(Material.ALLIUM, "&d繁花森林"))
         .put(Biome.BIRCH_FOREST, new BiomeInfo(Material.BIRCH_SAPLING, "&a樺木森林"))
-        .put(Biome.OLD_GROWTH_BIRCH_FOREST, new BiomeInfo(Material.BIRCH_LOG, "&a原始樺木森林"))
+        .put(Biome.OLD_GROWTH_BIRCH_FOREST, new BiomeInfo(Material.BIRCH_LOG, "&a原生樺木森林"))
         .put(Biome.DARK_FOREST, new BiomeInfo(Material.DARK_OAK_SAPLING, "&2黑森林"))
         .put(Biome.WINDSWEPT_FOREST, new BiomeInfo(Material.SPRUCE_SAPLING, "&2風蝕森林"))
+        .put(Biome.GROVE, new BiomeInfo(Material.POWDER_SNOW, "&f雪林"))
+        .put(Biome.CHERRY_GROVE, new BiomeInfo(Material.CHERRY_SAPLING, "&d櫻花樹林"))
 
         // 叢林生態域
         .put(Biome.JUNGLE, new BiomeInfo(Material.JUNGLE_SAPLING, "&2叢林"))
@@ -72,8 +77,12 @@ public class GuiListener implements Listener {
         // 針葉林生態域
         .put(Biome.SNOWY_TAIGA, new BiomeInfo(Material.SNOW, "&f冰雪針葉林"))
         .put(Biome.TAIGA, new BiomeInfo(Material.SPRUCE_SAPLING, "&2針葉林"))
-        .put(Biome.OLD_GROWTH_PINE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原始松木針葉林"))
-        .put(Biome.OLD_GROWTH_SPRUCE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原始杉木針葉林"))
+        .put(Biome.OLD_GROWTH_PINE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原生松木針葉林"))
+        .put(Biome.OLD_GROWTH_SPRUCE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原生杉木針葉林"))
+
+        // 特殊寒冷生態域
+        .put(Biome.ICE_SPIKES, new BiomeInfo(Material.PACKED_ICE, "&b冰刺"))
+        .put(Biome.SNOWY_SLOPES, new BiomeInfo(Material.SNOW, "&f雪坡"))
 
         // 乾燥生態域
         .put(Biome.DESERT, new BiomeInfo(Material.SAND, "&e沙漠"))
@@ -103,9 +112,10 @@ public class GuiListener implements Listener {
         // 終界生態域
         .put(Biome.THE_END, new BiomeInfo(Material.END_STONE, "&5終界"))
         .put(Biome.END_HIGHLANDS, new BiomeInfo(Material.PURPUR_BLOCK, "&5終界高地"))
-        .put(Biome.END_MIDLANDS, new BiomeInfo(Material.CHORUS_FLOWER, "&5終界內陸"))
+        .put(Biome.END_MIDLANDS, new BiomeInfo(Material.CHORUS_FLOWER, "&5終界平地"))
         .put(Biome.SMALL_END_ISLANDS, new BiomeInfo(Material.END_STONE_BRICKS, "&5終界小島"))
         .put(Biome.END_BARRENS, new BiomeInfo(Material.PURPUR_PILLAR, "&5終界荒地"))
+        .put(Biome.THE_VOID, new BiomeInfo(Material.BEDROCK, "&8虛空"))
 
         // 河流生態域
         .put(Biome.RIVER, new BiomeInfo(Material.WATER_BUCKET, "&b河流"))
