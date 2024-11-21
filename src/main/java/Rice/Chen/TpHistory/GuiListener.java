@@ -157,32 +157,32 @@ public class GuiListener implements Listener {
                 // 海洋生態域
                 case OCEAN -> "&1海洋";
                 case DEEP_OCEAN -> "&1深海";
-                case FROZEN_OCEAN -> "&b冰凍海洋";
-                case DEEP_FROZEN_OCEAN -> "&b深層冰凍海洋";
+                case FROZEN_OCEAN -> "&b寒凍海洋";
+                case DEEP_FROZEN_OCEAN -> "&b冰凍深海";
                 case COLD_OCEAN -> "&b寒冷海洋";
-                case DEEP_COLD_OCEAN -> "&b深層寒冷海洋";
-                case LUKEWARM_OCEAN -> "&b溫暖海洋";
-                case DEEP_LUKEWARM_OCEAN -> "&b深層溫暖海洋";
-                case WARM_OCEAN -> "&b熱帶海洋";
+                case DEEP_COLD_OCEAN -> "&b寒冷深海";
+                case LUKEWARM_OCEAN -> "&b溫和海洋";
+                case DEEP_LUKEWARM_OCEAN -> "&b溫和深海";
+                case WARM_OCEAN -> "&b溫暖海洋";
             
                 // 海岸生態域
                 case BEACH -> "&e沙灘";
-                case SNOWY_BEACH -> "&f雪地沙灘";
+                case SNOWY_BEACH -> "&f冰雪沙灘";
                 case STONY_SHORE -> "&8石岸";
             
                 // 平地生態域
                 case PLAINS -> "&a平原";
                 case SUNFLOWER_PLAINS -> "&e向日葵平原";
-                case MEADOW -> "&a草地";
+                case MEADOW -> "&a草甸";
                 case SNOWY_PLAINS -> "&f雪原";
             
                 // 森林生態域
                 case FOREST -> "&2森林";
-                case FLOWER_FOREST -> "&d花森林";
+                case FLOWER_FOREST -> "&d繁花森林";
                 case BIRCH_FOREST -> "&a樺木森林";
                 case OLD_GROWTH_BIRCH_FOREST -> "&a原始樺木森林";
                 case DARK_FOREST -> "&2黑森林";
-                case WINDSWEPT_FOREST -> "&2風袭森林";
+                case WINDSWEPT_FOREST -> "&2風蝕森林";
             
                 // 叢林生態域
                 case JUNGLE -> "&2叢林";
@@ -190,7 +190,7 @@ public class GuiListener implements Listener {
                 case BAMBOO_JUNGLE -> "&2竹林";
             
                 // 季節性生態域
-                case SNOWY_TAIGA -> "&f積雪針葉林";
+                case SNOWY_TAIGA -> "&f冰雪針葉林";
                 case TAIGA -> "&2針葉林";
                 case OLD_GROWTH_PINE_TAIGA -> "&2原始松木針葉林";
                 case OLD_GROWTH_SPRUCE_TAIGA -> "&2原始杉木針葉林";
@@ -198,24 +198,24 @@ public class GuiListener implements Listener {
                 // 乾燥生態域
                 case DESERT -> "&e沙漠";
                 case BADLANDS -> "&6惡地";
-                case WOODED_BADLANDS -> "&6繁茂惡地";
-                case ERODED_BADLANDS -> "&6裸蝕惡地";
+                case WOODED_BADLANDS -> "&6疏林惡地";
+                case ERODED_BADLANDS -> "&6侵蝕惡地";
             
                 // 山地生態域
-                case WINDSWEPT_HILLS -> "&8風袭丘陵";
-                case WINDSWEPT_GRAVELLY_HILLS -> "&8風袭礫石丘陵";
-                case JAGGED_PEAKS -> "&f鋸齒峰";
-                case FROZEN_PEAKS -> "&f冰凍峰";
-                case STONY_PEAKS -> "&8石峰";
+                case WINDSWEPT_HILLS -> "&8風蝕丘陵";
+                case WINDSWEPT_GRAVELLY_HILLS -> "&8風蝕礫質丘陵";
+                case JAGGED_PEAKS -> "&f尖峭山峰";
+                case FROZEN_PEAKS -> "&f霜凍山峰";
+                case STONY_PEAKS -> "&8裸岩山峰";
             
                 // 洞穴生態域
-                case LUSH_CAVES -> "&a繁茂洞穴";
-                case DRIPSTONE_CAVES -> "&8溶洞";
-                case DEEP_DARK -> "&8幽暗深處";
+                case LUSH_CAVES -> "&a蒼鬱洞窟";
+                case DRIPSTONE_CAVES -> "&8鐘乳石洞窟";
+                case DEEP_DARK -> "&8深淵";
             
                 // 地獄生態域
-                case NETHER_WASTES -> "&c下界荒地";
-                case SOUL_SAND_VALLEY -> "&8靈魂沙峽谷";
+                case NETHER_WASTES -> "&c地獄荒原";
+                case SOUL_SAND_VALLEY -> "&8靈魂砂谷";
                 case CRIMSON_FOREST -> "&4緋紅森林";
                 case WARPED_FOREST -> "&3詭異森林";
                 case BASALT_DELTAS -> "&8玄武岩三角洲";
@@ -223,16 +223,16 @@ public class GuiListener implements Listener {
                 // 終界生態域
                 case THE_END -> "&5終界";
                 case END_HIGHLANDS -> "&5終界高地";
-                case END_MIDLANDS -> "&5終界中地";
+                case END_MIDLANDS -> "&5終界內陸";
                 case SMALL_END_ISLANDS -> "&5終界小島";
                 case END_BARRENS -> "&5終界荒地";
             
                 // 河流生態域
                 case RIVER -> "&b河流";
-                case FROZEN_RIVER -> "&b冰凍河流";
+                case FROZEN_RIVER -> "&b寒凍河流";
             
                 // 其他生態域
-                case MUSHROOM_FIELDS -> "&d蘑菇島";
+                case MUSHROOM_FIELDS -> "&d蘑菇地";
                 case SWAMP -> "&2沼澤";
                 case MANGROVE_SWAMP -> "&2紅樹林沼澤";
             
