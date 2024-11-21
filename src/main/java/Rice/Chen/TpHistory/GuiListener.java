@@ -217,7 +217,7 @@ public class GuiListener implements Listener {
                 case NETHER_WASTES -> "&c地獄荒原";
                 case SOUL_SAND_VALLEY -> "&8靈魂砂谷";
                 case CRIMSON_FOREST -> "&4緋紅森林";
-                case WARPED_FOREST -> "&3詭異森林";
+                case WARPED_FOREST -> "&3扭曲森林";
                 case BASALT_DELTAS -> "&8玄武岩三角洲";
             
                 // 終界生態域
