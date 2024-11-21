@@ -1,5 +1,6 @@
 package Rice.Chen.TpHistory;
 
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,13 +31,100 @@ public class GuiListener implements Listener {
     private final SimpleDateFormat dateFormat;
     private final Pattern hexPattern;
 
+    public record BiomeInfo(Material material, String displayName) {}
+    
+    private static final ImmutableMap<Biome, BiomeInfo> BIOME_INFO = ImmutableMap.<Biome, BiomeInfo>builder()
+        // 海洋生態域
+        .put(Biome.OCEAN, new BiomeInfo(Material.WATER_BUCKET, "&1海洋"))
+        .put(Biome.DEEP_OCEAN, new BiomeInfo(Material.PRISMARINE_CRYSTALS, "&1深海"))
+        .put(Biome.FROZEN_OCEAN, new BiomeInfo(Material.ICE, "&b寒凍海洋"))
+        .put(Biome.DEEP_FROZEN_OCEAN, new BiomeInfo(Material.PACKED_ICE, "&b冰凍深海"))
+        .put(Biome.COLD_OCEAN, new BiomeInfo(Material.COD, "&b寒冷海洋"))
+        .put(Biome.DEEP_COLD_OCEAN, new BiomeInfo(Material.SALMON, "&b寒冷深海"))
+        .put(Biome.LUKEWARM_OCEAN, new BiomeInfo(Material.TROPICAL_FISH, "&b溫和海洋"))
+        .put(Biome.DEEP_LUKEWARM_OCEAN, new BiomeInfo(Material.PUFFERFISH, "&b溫和深海"))
+        .put(Biome.WARM_OCEAN, new BiomeInfo(Material.TUBE_CORAL, "&b溫暖海洋"))
+
+        // 海岸生態域
+        .put(Biome.BEACH, new BiomeInfo(Material.SANDSTONE, "&e沙灘"))
+        .put(Biome.SNOWY_BEACH, new BiomeInfo(Material.SNOW, "&f冰雪沙灘"))
+        .put(Biome.STONY_SHORE, new BiomeInfo(Material.STONE, "&8石岸"))
+
+        // 平地生態域
+        .put(Biome.PLAINS, new BiomeInfo(Material.GRASS_BLOCK, "&a平原"))
+        .put(Biome.SUNFLOWER_PLAINS, new BiomeInfo(Material.SUNFLOWER, "&e向日葵平原"))
+        .put(Biome.MEADOW, new BiomeInfo(Material.GRASS, "&a草甸"))
+        .put(Biome.SNOWY_PLAINS, new BiomeInfo(Material.SNOW_BLOCK, "&f雪原"))
+
+        // 森林生態域
+        .put(Biome.FOREST, new BiomeInfo(Material.OAK_SAPLING, "&2森林"))
+        .put(Biome.FLOWER_FOREST, new BiomeInfo(Material.ALLIUM, "&d繁花森林"))
+        .put(Biome.BIRCH_FOREST, new BiomeInfo(Material.BIRCH_SAPLING, "&a樺木森林"))
+        .put(Biome.OLD_GROWTH_BIRCH_FOREST, new BiomeInfo(Material.BIRCH_LOG, "&a原始樺木森林"))
+        .put(Biome.DARK_FOREST, new BiomeInfo(Material.DARK_OAK_SAPLING, "&2黑森林"))
+        .put(Biome.WINDSWEPT_FOREST, new BiomeInfo(Material.SPRUCE_SAPLING, "&2風蝕森林"))
+
+        // 叢林生態域
+        .put(Biome.JUNGLE, new BiomeInfo(Material.JUNGLE_SAPLING, "&2叢林"))
+        .put(Biome.SPARSE_JUNGLE, new BiomeInfo(Material.VINE, "&2稀疏叢林"))
+        .put(Biome.BAMBOO_JUNGLE, new BiomeInfo(Material.BAMBOO, "&2竹林"))
+
+        // 針葉林生態域
+        .put(Biome.SNOWY_TAIGA, new BiomeInfo(Material.SNOW, "&f冰雪針葉林"))
+        .put(Biome.TAIGA, new BiomeInfo(Material.SPRUCE_SAPLING, "&2針葉林"))
+        .put(Biome.OLD_GROWTH_PINE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原始松木針葉林"))
+        .put(Biome.OLD_GROWTH_SPRUCE_TAIGA, new BiomeInfo(Material.SPRUCE_LOG, "&2原始杉木針葉林"))
+
+        // 乾燥生態域
+        .put(Biome.DESERT, new BiomeInfo(Material.SAND, "&e沙漠"))
+        .put(Biome.BADLANDS, new BiomeInfo(Material.TERRACOTTA, "&6惡地"))
+        .put(Biome.WOODED_BADLANDS, new BiomeInfo(Material.DARK_OAK_SAPLING, "&6疏林惡地"))
+        .put(Biome.ERODED_BADLANDS, new BiomeInfo(Material.RED_SANDSTONE, "&6侵蝕惡地"))
+
+        // 山地生態域
+        .put(Biome.WINDSWEPT_HILLS, new BiomeInfo(Material.STONE, "&8風蝕丘陵"))
+        .put(Biome.WINDSWEPT_GRAVELLY_HILLS, new BiomeInfo(Material.GRAVEL, "&8風蝕礫質丘陵"))
+        .put(Biome.JAGGED_PEAKS, new BiomeInfo(Material.STONE, "&f尖峭山峰"))
+        .put(Biome.FROZEN_PEAKS, new BiomeInfo(Material.PACKED_ICE, "&f霜凍山峰"))
+        .put(Biome.STONY_PEAKS, new BiomeInfo(Material.STONE, "&8裸岩山峰"))
+
+        // 洞穴生態域
+        .put(Biome.LUSH_CAVES, new BiomeInfo(Material.MOSS_BLOCK, "&a蒼鬱洞窟"))
+        .put(Biome.DRIPSTONE_CAVES, new BiomeInfo(Material.DRIPSTONE_BLOCK, "&8鐘乳石洞窟"))
+        .put(Biome.DEEP_DARK, new BiomeInfo(Material.SCULK, "&8深淵"))
+
+        // 地獄生態域
+        .put(Biome.NETHER_WASTES, new BiomeInfo(Material.NETHERRACK, "&c地獄荒原"))
+        .put(Biome.SOUL_SAND_VALLEY, new BiomeInfo(Material.SOUL_SAND, "&8靈魂砂谷"))
+        .put(Biome.CRIMSON_FOREST, new BiomeInfo(Material.CRIMSON_FUNGUS, "&4緋紅森林"))
+        .put(Biome.WARPED_FOREST, new BiomeInfo(Material.WARPED_FUNGUS, "&3扭曲森林"))
+        .put(Biome.BASALT_DELTAS, new BiomeInfo(Material.BASALT, "&8玄武岩三角洲"))
+
+        // 終界生態域
+        .put(Biome.THE_END, new BiomeInfo(Material.END_STONE, "&5終界"))
+        .put(Biome.END_HIGHLANDS, new BiomeInfo(Material.PURPUR_BLOCK, "&5終界高地"))
+        .put(Biome.END_MIDLANDS, new BiomeInfo(Material.CHORUS_FLOWER, "&5終界內陸"))
+        .put(Biome.SMALL_END_ISLANDS, new BiomeInfo(Material.END_STONE_BRICKS, "&5終界小島"))
+        .put(Biome.END_BARRENS, new BiomeInfo(Material.PURPUR_PILLAR, "&5終界荒地"))
+
+        // 河流生態域
+        .put(Biome.RIVER, new BiomeInfo(Material.WATER_BUCKET, "&b河流"))
+        .put(Biome.FROZEN_RIVER, new BiomeInfo(Material.ICE, "&b寒凍河流"))
+
+        // 其他生態域
+        .put(Biome.MUSHROOM_FIELDS, new BiomeInfo(Material.RED_MUSHROOM_BLOCK, "&d蘑菇地"))
+        .put(Biome.SWAMP, new BiomeInfo(Material.LILY_PAD, "&2沼澤"))
+        .put(Biome.MANGROVE_SWAMP, new BiomeInfo(Material.MANGROVE_ROOTS, "&2紅樹林沼澤"))
+        .build();
+
+    private static final BiomeInfo DEFAULT_BIOME_INFO = new BiomeInfo(Material.ENDER_PEARL, "&7未知生態域");
+
     public GuiListener(TeleportManager teleportManager) {
         this.teleportManager = teleportManager;
         this.dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         this.hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
     }
 
-    // 處理十六進制顏色代碼
     private String translateHexColorCodes(String message) {
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
@@ -59,189 +147,11 @@ public class GuiListener implements Listener {
     }
 
     private Material getBiomeMaterial(Biome biome) {
-        try {
-            return switch (biome) {
-                // 海洋生態域
-                case OCEAN -> Material.WATER_BUCKET;
-                case DEEP_OCEAN -> Material.PRISMARINE_CRYSTALS;
-                case FROZEN_OCEAN -> Material.ICE;
-                case DEEP_FROZEN_OCEAN -> Material.PACKED_ICE;
-                case COLD_OCEAN -> Material.COD;
-                case DEEP_COLD_OCEAN -> Material.SALMON;
-                case LUKEWARM_OCEAN -> Material.TROPICAL_FISH;
-                case DEEP_LUKEWARM_OCEAN -> Material.PUFFERFISH;
-                case WARM_OCEAN -> Material.TUBE_CORAL;
-            
-                // 海岸生態域
-                case BEACH -> Material.SANDSTONE;
-                case SNOWY_BEACH -> Material.SNOW;
-                case STONY_SHORE -> Material.STONE;
-            
-                // 平地生態域
-                case PLAINS -> Material.GRASS_BLOCK;
-                case SUNFLOWER_PLAINS -> Material.SUNFLOWER;
-                case MEADOW -> Material.GRASS;
-                case SNOWY_PLAINS -> Material.SNOW_BLOCK;
-            
-                // 森林生態域
-                case FOREST -> Material.OAK_SAPLING;
-                case FLOWER_FOREST -> Material.ALLIUM;
-                case BIRCH_FOREST -> Material.BIRCH_SAPLING;
-                case OLD_GROWTH_BIRCH_FOREST -> Material.BIRCH_LOG;
-                case DARK_FOREST -> Material.DARK_OAK_SAPLING;
-                case WINDSWEPT_FOREST -> Material.SPRUCE_SAPLING;
-            
-                // 叢林生態域
-                case JUNGLE -> Material.JUNGLE_SAPLING;
-                case SPARSE_JUNGLE -> Material.VINE;
-                case BAMBOO_JUNGLE -> Material.BAMBOO;
-            
-                // 針葉林生態域
-                case SNOWY_TAIGA -> Material.SNOW;
-                case TAIGA -> Material.SPRUCE_SAPLING;
-                case OLD_GROWTH_PINE_TAIGA -> Material.SPRUCE_LOG;
-                case OLD_GROWTH_SPRUCE_TAIGA -> Material.SPRUCE_LOG;
-            
-                // 乾燥生態域
-                case DESERT -> Material.SAND;
-                case BADLANDS -> Material.TERRACOTTA;
-                case WOODED_BADLANDS -> Material.DARK_OAK_SAPLING;
-                case ERODED_BADLANDS -> Material.RED_SANDSTONE;
-            
-                // 山地生態域
-                case WINDSWEPT_HILLS -> Material.STONE;
-                case WINDSWEPT_GRAVELLY_HILLS -> Material.GRAVEL;
-                case JAGGED_PEAKS -> Material.STONE;
-                case FROZEN_PEAKS -> Material.PACKED_ICE;
-                case STONY_PEAKS -> Material.STONE;
-            
-                // 洞穴生態域
-                case LUSH_CAVES -> Material.MOSS_BLOCK;
-                case DRIPSTONE_CAVES -> Material.DRIPSTONE_BLOCK;
-                case DEEP_DARK -> Material.SCULK;
-            
-                // 地獄生態域
-                case NETHER_WASTES -> Material.NETHERRACK;
-                case SOUL_SAND_VALLEY -> Material.SOUL_SAND;
-                case CRIMSON_FOREST -> Material.CRIMSON_FUNGUS;
-                case WARPED_FOREST -> Material.WARPED_FUNGUS;
-                case BASALT_DELTAS -> Material.BASALT;
-            
-                // 終界生態域
-                case THE_END -> Material.END_STONE;
-                case END_HIGHLANDS -> Material.PURPUR_BLOCK;
-                case END_MIDLANDS -> Material.CHORUS_FLOWER;
-                case SMALL_END_ISLANDS -> Material.END_STONE_BRICKS;
-                case END_BARRENS -> Material.PURPUR_PILLAR;
-            
-                // 河流生態域
-                case RIVER -> Material.WATER_BUCKET;
-                case FROZEN_RIVER -> Material.ICE;
-            
-                // 其他生態域
-                case MUSHROOM_FIELDS -> Material.RED_MUSHROOM_BLOCK;
-                case SWAMP -> Material.LILY_PAD;
-                case MANGROVE_SWAMP -> Material.MANGROVE_ROOTS;
-            
-                // 預設材質
-                default -> Material.ENDER_PEARL;
-            };
-        } catch (IllegalArgumentException e) {
-            return Material.ENDER_PEARL;
-        }
+        return BIOME_INFO.getOrDefault(biome, DEFAULT_BIOME_INFO).material();
     }
 
     private String getBiomeDisplayName(Biome biome) {
-        try {
-            return switch (biome) {
-                // 海洋生態域
-                case OCEAN -> "&1海洋";
-                case DEEP_OCEAN -> "&1深海";
-                case FROZEN_OCEAN -> "&b寒凍海洋";
-                case DEEP_FROZEN_OCEAN -> "&b冰凍深海";
-                case COLD_OCEAN -> "&b寒冷海洋";
-                case DEEP_COLD_OCEAN -> "&b寒冷深海";
-                case LUKEWARM_OCEAN -> "&b溫和海洋";
-                case DEEP_LUKEWARM_OCEAN -> "&b溫和深海";
-                case WARM_OCEAN -> "&b溫暖海洋";
-            
-                // 海岸生態域
-                case BEACH -> "&e沙灘";
-                case SNOWY_BEACH -> "&f冰雪沙灘";
-                case STONY_SHORE -> "&8石岸";
-            
-                // 平地生態域
-                case PLAINS -> "&a平原";
-                case SUNFLOWER_PLAINS -> "&e向日葵平原";
-                case MEADOW -> "&a草甸";
-                case SNOWY_PLAINS -> "&f雪原";
-            
-                // 森林生態域
-                case FOREST -> "&2森林";
-                case FLOWER_FOREST -> "&d繁花森林";
-                case BIRCH_FOREST -> "&a樺木森林";
-                case OLD_GROWTH_BIRCH_FOREST -> "&a原始樺木森林";
-                case DARK_FOREST -> "&2黑森林";
-                case WINDSWEPT_FOREST -> "&2風蝕森林";
-            
-                // 叢林生態域
-                case JUNGLE -> "&2叢林";
-                case SPARSE_JUNGLE -> "&2稀疏叢林";
-                case BAMBOO_JUNGLE -> "&2竹林";
-            
-                // 季節性生態域
-                case SNOWY_TAIGA -> "&f冰雪針葉林";
-                case TAIGA -> "&2針葉林";
-                case OLD_GROWTH_PINE_TAIGA -> "&2原始松木針葉林";
-                case OLD_GROWTH_SPRUCE_TAIGA -> "&2原始杉木針葉林";
-            
-                // 乾燥生態域
-                case DESERT -> "&e沙漠";
-                case BADLANDS -> "&6惡地";
-                case WOODED_BADLANDS -> "&6疏林惡地";
-                case ERODED_BADLANDS -> "&6侵蝕惡地";
-            
-                // 山地生態域
-                case WINDSWEPT_HILLS -> "&8風蝕丘陵";
-                case WINDSWEPT_GRAVELLY_HILLS -> "&8風蝕礫質丘陵";
-                case JAGGED_PEAKS -> "&f尖峭山峰";
-                case FROZEN_PEAKS -> "&f霜凍山峰";
-                case STONY_PEAKS -> "&8裸岩山峰";
-            
-                // 洞穴生態域
-                case LUSH_CAVES -> "&a蒼鬱洞窟";
-                case DRIPSTONE_CAVES -> "&8鐘乳石洞窟";
-                case DEEP_DARK -> "&8深淵";
-            
-                // 地獄生態域
-                case NETHER_WASTES -> "&c地獄荒原";
-                case SOUL_SAND_VALLEY -> "&8靈魂砂谷";
-                case CRIMSON_FOREST -> "&4緋紅森林";
-                case WARPED_FOREST -> "&3扭曲森林";
-                case BASALT_DELTAS -> "&8玄武岩三角洲";
-            
-                // 終界生態域
-                case THE_END -> "&5終界";
-                case END_HIGHLANDS -> "&5終界高地";
-                case END_MIDLANDS -> "&5終界內陸";
-                case SMALL_END_ISLANDS -> "&5終界小島";
-                case END_BARRENS -> "&5終界荒地";
-            
-                // 河流生態域
-                case RIVER -> "&b河流";
-                case FROZEN_RIVER -> "&b寒凍河流";
-            
-                // 其他生態域
-                case MUSHROOM_FIELDS -> "&d蘑菇地";
-                case SWAMP -> "&2沼澤";
-                case MANGROVE_SWAMP -> "&2紅樹林沼澤";
-            
-                // 預設名稱
-                default -> "&7未知生態域";
-            };
-        } catch (IllegalArgumentException e) {
-            return "&7未知生態域";
-        }
+        return BIOME_INFO.getOrDefault(biome, DEFAULT_BIOME_INFO).displayName();
     }
 
     public void openTpHistory(Player player) {
@@ -258,7 +168,7 @@ public class GuiListener implements Listener {
         for (int i = 0; i < 36; i++) {
             gui.setItem(i, background);
         }
-        
+
         // 添加返回主選單按鈕
         ItemStack menuButton = new ItemStack(Material.STICK);
         ItemMeta menuMeta = menuButton.getItemMeta();
@@ -342,19 +252,19 @@ public class GuiListener implements Listener {
         });
 
         if (isDuplicate) {
-        TextComponent message1 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7您進行了傳送，但是此位置已在記錄中，"));
-        TextComponent message2 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7因此不會重複紀錄，點此查看#e6bbf6近期傳送紀錄&7。"));
-        
-        message1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
-        message1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-            new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
-        message2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
-        message2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-            new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
+            TextComponent message1 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7您進行了傳送，但是此位置已在記錄中，"));
+            TextComponent message2 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7因此不會重複紀錄，點此查看#e6bbf6近期傳送紀錄&7。"));
             
-        player.spigot().sendMessage(message1);
-        player.spigot().sendMessage(message2);
-        return;
+            message1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
+            message1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+                new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
+            message2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
+            message2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
+                new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
+                
+            player.spigot().sendMessage(message1);
+            player.spigot().sendMessage(message2);
+            return;
         }
         
         teleportManager.addTeleportRecord(player, from);
