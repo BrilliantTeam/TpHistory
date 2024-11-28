@@ -243,6 +243,11 @@ public class GuiListener implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
         
+        // 檢查是否為電梯傳送
+        if (teleportManager.isElevatorTeleport(from, to)) {
+            return;
+        }
+        
         // 檢查是否為相同位置
         if (from.getWorld().equals(to.getWorld()) &&
             from.getBlockX() == to.getBlockX() &&
@@ -279,7 +284,6 @@ public class GuiListener implements Listener {
         
         teleportManager.addTeleportRecord(player, from);
         
-        // 發送可點擊的通知消息
         TextComponent message = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7已記錄傳送前的位置，點此查看#e6bbf6近期傳送紀錄&7。"));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 

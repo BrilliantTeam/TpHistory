@@ -1,6 +1,7 @@
 package Rice.Chen.TpHistory;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class TeleportManager {
     
     private void loadPlayerData(UUID playerId) {
         if (playerHistory.containsKey(playerId)) {
-            return; // 如果已經載入過，就不重複載入
+            return;
         }
         
         File playerFile = getPlayerFile(playerId);
@@ -67,10 +68,8 @@ public class TeleportManager {
         FileConfiguration data = YamlConfiguration.loadConfiguration(playerFile);
         List<TeleportRecord> history = playerHistory.get(playerId);
         
-        // 清除舊資料
         data.set("history", null);
         
-        // 儲存新資料
         for (int i = 0; i < history.size(); i++) {
             TeleportRecord record = history.get(i);
             String basePath = "history." + i;
@@ -78,7 +77,6 @@ public class TeleportManager {
             data.set(basePath + ".timestamp", record.getTimestamp());
         }
         
-        // 儲存到檔案
         try {
             data.save(playerFile);
         } catch (IOException e) {
@@ -92,15 +90,38 @@ public class TeleportManager {
         }
     }
     
+    public boolean isElevatorTeleport(Location from, Location to) {
+        // 檢查是否在同一世界
+        if (!from.getWorld().equals(to.getWorld())) {
+            return false;
+        }
+        
+        // 檢查X和Z是否相同
+        if (from.getBlockX() != to.getBlockX() || 
+            from.getBlockZ() != to.getBlockZ()) {
+            return false;
+        }
+        
+        // 檢查Y軸差距是否大於2格
+        int minY = Math.min(from.getBlockY(), to.getBlockY());
+        int maxY = Math.max(from.getBlockY(), to.getBlockY());
+        if (maxY - minY < 2) {
+            return false;
+        }
+
+        // 檢查玩家位置是否為電梯位置
+        Block fromBlock = from.getBlock();
+        Block toBlock = to.getBlock();
+        
+        return ElevatorStructure.isElevatorPosition(fromBlock) && 
+                ElevatorStructure.isElevatorPosition(toBlock);
+    }
+    
     public void addTeleportRecord(Player player, Location location) {
         UUID playerId = player.getUniqueId();
-        
-        // 確保玩家資料已載入
         loadPlayerData(playerId);
-        
         List<TeleportRecord> history = playerHistory.get(playerId);
         
-        // 檢查是否已存在相同位置的記錄
         boolean isDuplicate = history.stream().anyMatch(record -> {
             Location loc = record.getLocation();
             return loc.getWorld().equals(location.getWorld()) &&
@@ -109,7 +130,6 @@ public class TeleportManager {
                 loc.getBlockZ() == location.getBlockZ();
         });
         
-        // 如果不是重複位置，才添加新記錄
         if (!isDuplicate) {
             history.add(0, new TeleportRecord(location));
             
@@ -117,24 +137,19 @@ public class TeleportManager {
                 history.remove(history.size() - 1);
             }
             
-            // 即時儲存更改
             savePlayerData(playerId);
         }
     }
     
     public List<TeleportRecord> getPlayerHistory(UUID playerId) {
-        // 確保玩家資料已載入
         loadPlayerData(playerId);
         return playerHistory.getOrDefault(playerId, new ArrayList<>());
     }
     
-    // 清理未使用的玩家資料（可選）
     public void clearUnusedData() {
-        // 從記憶體中移除未使用的玩家資料
         playerHistory.clear();
     }
     
-    // 刪除玩家資料（可選）
     public void deletePlayerData(UUID playerId) {
         File playerFile = getPlayerFile(playerId);
         if (playerFile.exists()) {
