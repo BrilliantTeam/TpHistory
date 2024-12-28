@@ -63,6 +63,7 @@ public class TeleportManager {
         playerHistory.put(playerId, history);
     }
     
+
     private void savePlayerData(UUID playerId) {
         File playerFile = getPlayerFile(playerId);
         FileConfiguration data = YamlConfiguration.loadConfiguration(playerFile);
@@ -80,13 +81,30 @@ public class TeleportManager {
         try {
             data.save(playerFile);
         } catch (IOException e) {
-            plugin.getLogger().warning("§c無法儲存玩家 " + playerId + " 的傳送歷史記錄：" + e.getMessage());
+            TpHistory.getInstance().getLogger().warning("§c無法儲存玩家 " + playerId + " 的傳送歷史記錄：" + e.getMessage());
         }
     }
     
     public void saveAllData() {
         for (UUID playerId : playerHistory.keySet()) {
-            savePlayerData(playerId);
+            File playerFile = getPlayerFile(playerId);
+            FileConfiguration data = YamlConfiguration.loadConfiguration(playerFile);
+            List<TeleportRecord> history = playerHistory.get(playerId);
+            
+            data.set("history", null);
+            
+            for (int i = 0; i < history.size(); i++) {
+                TeleportRecord record = history.get(i);
+                String basePath = "history." + i;
+                data.set(basePath + ".location", record.getLocation());
+                data.set(basePath + ".timestamp", record.getTimestamp());
+            }
+            
+            try {
+                data.save(playerFile);
+            } catch (IOException e) {
+                TpHistory.getInstance().getLogger().warning("§c無法儲存玩家 " + playerId + " 的傳送歷史記錄：" + e.getMessage());
+            }
         }
     }
     

@@ -243,8 +243,9 @@ public class GuiListener implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
         
-        // 檢查是否為電梯傳送
-        if (teleportManager.isElevatorTeleport(from, to)) {
+        // 檢查是否為電梯傳送或觀察者傳送
+        if (teleportManager.isElevatorTeleport(from, to) || 
+            event.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             return;
         }
         
