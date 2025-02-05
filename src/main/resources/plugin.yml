@@ -1,7 +1,8 @@
-name: TpHistory
+name: BrilliantTpHistory
 main: Rice.Chen.TpHistory.TpHistory
 api-version: 1.20
 version: 1.0
+folia-supported: true
 
 commands:
   tpb:

@@ -325,7 +325,7 @@ public class GuiListener implements Listener {
             List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
             if (index < history.size()) {
                 Location loc = history.get(index).getLocation();
-                player.teleport(loc);
+                player.teleportAsync(loc);
                 player.sendMessage(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：#cfffc0已成功&7傳送到選擇的位置！"));
                 player.closeInventory();
             }

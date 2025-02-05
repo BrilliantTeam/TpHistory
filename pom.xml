@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>Rice.Chen</groupId>
-    <artifactId>TpHistory</artifactId>
+    <artifactId>BrilliantTpHistory</artifactId>
     <version>1.0</version>
 
     <properties>
