@@ -13,7 +13,7 @@ public class TpHistory extends JavaPlugin {
         
         // 初始化管理器和監聽器
         this.teleportManager = new TeleportManager(this);  // 傳入 plugin 實例
-        this.guiListener = new GuiListener(teleportManager);
+        this.guiListener = new GuiListener(this, teleportManager);
         
         // 註冊事件監聽器
         getServer().getPluginManager().registerEvents(guiListener, this);
