@@ -25,11 +25,54 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
 
 public class GuiListener implements Listener {
     private final TeleportManager teleportManager;
     private final SimpleDateFormat dateFormat;
     private final Pattern hexPattern;
+
+    public record CachedTeleportData(TeleportRecord record, Biome biome) {}
+
+    private final ConcurrentHashMap<UUID, List<CachedTeleportData>> playerBiomeCache = new ConcurrentHashMap<>();
+
+    public CompletableFuture<Void> preloadBiomeData(Player player) {
+        List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
+        List<CompletableFuture<CachedTeleportData>> futures = new ArrayList<>();
+        
+        for (TeleportRecord record : history) {
+            Location loc = record.getLocation();
+            if (loc != null && loc.getWorld() != null) {
+                CompletableFuture<CachedTeleportData> future = new CompletableFuture<>();
+                
+                Bukkit.getServer().getRegionScheduler().execute(plugin, loc, () -> {
+                    try {
+                        Biome biome = loc.getBlock().getBiome();
+                        future.complete(new CachedTeleportData(record, biome));
+                    } catch (Exception e) {
+                        future.complete(new CachedTeleportData(record, Biome.PLAINS));
+                    }
+                });
+                
+                futures.add(future);
+            }
+        }
+        
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenAccept(v -> {
+                    List<CachedTeleportData> cachedData = new ArrayList<>();
+                    for (CompletableFuture<CachedTeleportData> future : futures) {
+                        try {
+                            cachedData.add(future.get());
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("獲取生態域數據失敗：" + e.getMessage());
+                        }
+                    }
+                    playerBiomeCache.put(player.getUniqueId(), cachedData);
+                });
+    }
 
     public record BiomeInfo(Material material, String displayName) {}
     
@@ -129,7 +172,10 @@ public class GuiListener implements Listener {
 
     private static final BiomeInfo DEFAULT_BIOME_INFO = new BiomeInfo(Material.ENDER_PEARL, "&7未知生態域");
 
-    public GuiListener(TeleportManager teleportManager) {
+    private final TpHistory plugin;
+
+    public GuiListener(TpHistory plugin, TeleportManager teleportManager) {
+        this.plugin = plugin;
         this.teleportManager = teleportManager;
         this.dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         this.hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
@@ -167,19 +213,16 @@ public class GuiListener implements Listener {
     public void openTpHistory(Player player) {
         Inventory gui = Bukkit.createInventory(null, 36, translateHexColorCodes("&0&l近十次的傳送紀錄"));
         
-        // 設置背景
         ItemStack background = new ItemStack(Material.STICK);
         ItemMeta meta = background.getItemMeta();
         meta.setCustomModelData(20036);
         meta.setDisplayName(" ");
         background.setItemMeta(meta);
         
-        // 填充背景
         for (int i = 0; i < 36; i++) {
             gui.setItem(i, background);
         }
 
-        // 添加返回主選單按鈕
         ItemStack menuButton = new ItemStack(Material.STICK);
         ItemMeta menuMeta = menuButton.getItemMeta();
         menuMeta.setCustomModelData(20004);
@@ -189,7 +232,6 @@ public class GuiListener implements Listener {
         
         List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
         
-        // 如果沒有記錄，顯示提示訊息
         if (history.isEmpty()) {
             ItemStack noRecord = new ItemStack(Material.BARRIER);
             ItemMeta noRecordMeta = noRecord.getItemMeta();
@@ -201,17 +243,46 @@ public class GuiListener implements Listener {
             return;
         }
         
+        List<CachedTeleportData> cachedData = playerBiomeCache.getOrDefault(player.getUniqueId(), new ArrayList<>());
+        
+        if (cachedData.isEmpty() || cachedData.size() < history.size()) {
+            ItemStack loading = new ItemStack(Material.CLOCK);
+            ItemMeta loadingMeta = loading.getItemMeta();
+            loadingMeta.setDisplayName(translateHexColorCodes("#ffbc61&l資料加載中..."));
+            List<String> lore = new ArrayList<>();
+            lore.add(translateHexColorCodes("&7請稍後再試。"));
+            loadingMeta.setLore(lore);
+            loading.setItemMeta(loadingMeta);
+            gui.setItem(13, loading);
+            
+            player.openInventory(gui);
+            
+            preloadBiomeData(player).thenRun(() -> {
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (player.getOpenInventory().getTitle().equals(translateHexColorCodes("&0&l近十次的傳送紀錄"))) {
+                        updateTpHistoryGUI(player, gui);
+                    }
+                });
+            });
+            return;
+        }
+        
+        updateTpHistoryGUI(player, gui);
+    }
+
+    private void updateTpHistoryGUI(Player player, Inventory gui) {
+        List<CachedTeleportData> cachedData = playerBiomeCache.getOrDefault(player.getUniqueId(), new ArrayList<>());
         int[] slots = {11, 12, 13, 14, 15, 20, 21, 22, 23, 24};
         
-        for (int i = 0; i < slots.length && i < history.size(); i++) {
-            TeleportRecord record = history.get(i);
+        for (int i = 0; i < slots.length && i < cachedData.size(); i++) {
+            CachedTeleportData data = cachedData.get(i);
+            TeleportRecord record = data.record();
+            Biome biome = data.biome();
             Location loc = record.getLocation();
-            Biome biome = loc.getBlock().getBiome();
             
             ItemStack item = new ItemStack(getBiomeMaterial(biome), i + 1);
             ItemMeta itemMeta = item.getItemMeta();
             
-            // 設置物品名稱
             itemMeta.setDisplayName(translateHexColorCodes(
                 String.format("&9#%d &f| #cfffc0%s, %s, %s", 
                     i + 1,
@@ -220,7 +291,6 @@ public class GuiListener implements Listener {
                     loc.getBlockZ())
             ));
             
-            // 設置說明文字
             List<String> lore = new ArrayList<>();
             lore.add(translateHexColorCodes("&7    "));
             lore.add(translateHexColorCodes(String.format("&7    世界：&f%s    ", translateWorldName(loc.getWorld().getName()))));
@@ -234,7 +304,11 @@ public class GuiListener implements Listener {
             gui.setItem(slots[i], item);
         }
         
-        player.openInventory(gui);
+        if (player.getOpenInventory().getTitle().equals(translateHexColorCodes("&0&l近十次的傳送紀錄"))) {
+            player.updateInventory();
+        } else {
+            player.openInventory(gui);
+        }
     }
 
     @EventHandler
@@ -243,13 +317,11 @@ public class GuiListener implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
         
-        // 檢查是否為電梯傳送或觀察者傳送
         if (teleportManager.isElevatorTeleport(from, to) || 
             event.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             return;
         }
         
-        // 檢查是否為相同位置
         if (from.getWorld().equals(to.getWorld()) &&
             from.getBlockX() == to.getBlockX() &&
             from.getBlockY() == to.getBlockY() &&
@@ -257,7 +329,6 @@ public class GuiListener implements Listener {
             return;
         }
         
-        // 檢查是否已存在相同位置的記錄
         List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
         boolean isDuplicate = history.stream().anyMatch(record -> {
             Location loc = record.getLocation();
@@ -284,6 +355,10 @@ public class GuiListener implements Listener {
         }
         
         teleportManager.addTeleportRecord(player, from);
+    
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            preloadBiomeData(player);
+        });
         
         TextComponent message = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7已記錄傳送前的位置，點此查看#e6bbf6近期傳送紀錄&7。"));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
@@ -304,14 +379,12 @@ public class GuiListener implements Listener {
         
         if (clicked == null) return;
         
-        // 處理返回主選單按鈕
         if (event.getSlot() == 27 && clicked.getType() == Material.STICK) {
             player.closeInventory();
             player.performCommand("menu");
             return;
         }
         
-        // 處理傳送按鈕點擊
         int slot = event.getSlot();
         int index = -1;
         

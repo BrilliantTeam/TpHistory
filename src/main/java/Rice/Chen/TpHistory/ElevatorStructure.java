@@ -9,7 +9,6 @@ public class ElevatorStructure {
     private static final Set<Material> CARPET_PRESSURE_PLATES = new HashSet<>();
     
     static {
-        // 添加所有地毯類型
         Material[] carpets = {
             Material.WHITE_CARPET, Material.ORANGE_CARPET, Material.MAGENTA_CARPET,
             Material.LIGHT_BLUE_CARPET, Material.YELLOW_CARPET, Material.LIME_CARPET,
@@ -19,7 +18,6 @@ public class ElevatorStructure {
             Material.BLACK_CARPET, Material.MOSS_CARPET
         };
         
-        // 添加所有壓力板類型
         Material[] pressurePlates = {
             Material.OAK_PRESSURE_PLATE, Material.SPRUCE_PRESSURE_PLATE,
             Material.BIRCH_PRESSURE_PLATE, Material.JUNGLE_PRESSURE_PLATE,
@@ -52,12 +50,10 @@ public class ElevatorStructure {
     public static boolean isElevatorPosition(Block playerBlock) {
         Block belowBlock = playerBlock.getRelative(0, -1, 0);
         
-        // 對於地毯/壓力板電梯
         if (CARPET_PRESSURE_PLATES.contains(playerBlock.getType())) {
             return belowBlock.getType() == Material.QUARTZ_BLOCK;
         }
         
-        // 對於紅石方塊電梯
         if (belowBlock.getType() == Material.QUARTZ_BLOCK) {
             return belowBlock.getRelative(0, -1, 0).getType() == Material.REDSTONE_BLOCK;
         }

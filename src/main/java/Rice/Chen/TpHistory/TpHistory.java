@@ -1,8 +1,13 @@
 package Rice.Chen.TpHistory;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-public class TpHistory extends JavaPlugin {
+public class TpHistory extends JavaPlugin implements Listener {
     private static TpHistory instance;
     private GuiListener guiListener;
     private TeleportManager teleportManager;
@@ -11,22 +16,26 @@ public class TpHistory extends JavaPlugin {
     public void onEnable() {
         instance = this;
         
-        // 初始化管理器和監聽器
-        this.teleportManager = new TeleportManager(this);  // 傳入 plugin 實例
-        this.guiListener = new GuiListener(teleportManager);
+        this.teleportManager = new TeleportManager(this);  
+        this.guiListener = new GuiListener(this, teleportManager);
         
-        // 註冊事件監聽器
         getServer().getPluginManager().registerEvents(guiListener, this);
+        getServer().getPluginManager().registerEvents(this, this);
         
-        // 註冊指令
         getCommand("tpb").setExecutor(new TpHistoryCommand(teleportManager, guiListener));
         
         getLogger().info("TpHistory 插件已啟用！");
     }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            guiListener.preloadBiomeData(event.getPlayer());
+        });
+    }
     
     @Override
     public void onDisable() {
-        // 儲存所有玩家的資料
         if (teleportManager != null) {
             teleportManager.saveAllData();
         }
