@@ -109,25 +109,21 @@ public class TeleportManager {
     }
     
     public boolean isElevatorTeleport(Location from, Location to) {
-        // 檢查是否在同一世界
         if (!from.getWorld().equals(to.getWorld())) {
             return false;
         }
         
-        // 檢查X和Z是否相同
         if (from.getBlockX() != to.getBlockX() || 
             from.getBlockZ() != to.getBlockZ()) {
             return false;
         }
         
-        // 檢查Y軸差距是否大於2格
         int minY = Math.min(from.getBlockY(), to.getBlockY());
         int maxY = Math.max(from.getBlockY(), to.getBlockY());
         if (maxY - minY < 2) {
             return false;
         }
 
-        // 檢查玩家位置是否為電梯位置
         Block fromBlock = from.getBlock();
         Block toBlock = to.getBlock();
         

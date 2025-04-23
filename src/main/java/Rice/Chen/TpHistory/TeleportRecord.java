@@ -11,7 +11,6 @@ public class TeleportRecord {
         this.timestamp = System.currentTimeMillis();
     }
     
-    // 用於從儲存中讀取資料的建構函數
     public TeleportRecord(Location location, long timestamp) {
         this.location = location;
         this.timestamp = timestamp;

@@ -11,14 +11,11 @@ public class TpHistory extends JavaPlugin {
     public void onEnable() {
         instance = this;
         
-        // 初始化管理器和監聽器
-        this.teleportManager = new TeleportManager(this);  // 傳入 plugin 實例
+        this.teleportManager = new TeleportManager(this);
         this.guiListener = new GuiListener(this, teleportManager);
         
-        // 註冊事件監聽器
         getServer().getPluginManager().registerEvents(guiListener, this);
         
-        // 註冊指令
         getCommand("tpb").setExecutor(new TpHistoryCommand(teleportManager, guiListener));
         
         getLogger().info("TpHistory 插件已啟用！");
@@ -26,7 +23,6 @@ public class TpHistory extends JavaPlugin {
     
     @Override
     public void onDisable() {
-        // 儲存所有玩家的資料
         if (teleportManager != null) {
             teleportManager.saveAllData();
         }

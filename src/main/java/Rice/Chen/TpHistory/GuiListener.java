@@ -40,7 +40,6 @@ public class GuiListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // 玩家加入時預加載生態域數據
         Bukkit.getAsyncScheduler().runNow(TpHistory.getInstance(), (ignored) -> {
             this.preloadBiomeData(event.getPlayer());
         });
@@ -232,22 +231,18 @@ public class GuiListener implements Listener {
     }
 
     public void openTpHistory(Player player) {
-        // 創建物品欄
         Inventory gui = Bukkit.createInventory(null, 36, translateHexColorCodes("&0&l近十次的傳送紀錄"));
 
-        // 設置背景
         ItemStack background = new ItemStack(Material.STICK);
         ItemMeta meta = background.getItemMeta();
         meta.setCustomModelData(20036);
         meta.setDisplayName(" ");
         background.setItemMeta(meta);
 
-        // 填充背景
         for (int i = 0; i < 36; i++) {
             gui.setItem(i, background);
         }
 
-        // 添加返回主選單按鈕
         ItemStack menuButton = new ItemStack(Material.STICK);
         ItemMeta menuMeta = menuButton.getItemMeta();
         menuMeta.setCustomModelData(20004);
@@ -257,7 +252,6 @@ public class GuiListener implements Listener {
 
         List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
 
-        // 如果沒有記錄，顯示提示訊息
         if (history.isEmpty()) {
             ItemStack noRecord = new ItemStack(Material.BARRIER);
             ItemMeta noRecordMeta = noRecord.getItemMeta();
@@ -269,11 +263,9 @@ public class GuiListener implements Listener {
             return;
         }
 
-        // 獲取緩存的生態域數據
         List<CachedTeleportData> cachedData = playerBiomeCache.getOrDefault(player.getUniqueId(), new ArrayList<>());
 
         if (cachedData.isEmpty() || cachedData.size() < history.size()) {
-            // 顯示加載中訊息
             ItemStack loading = new ItemStack(Material.CLOCK);
             ItemMeta loadingMeta = loading.getItemMeta();
             loadingMeta.setDisplayName(translateHexColorCodes("#ffbc61&l資料加載中..."));
@@ -283,22 +275,17 @@ public class GuiListener implements Listener {
             loading.setItemMeta(loadingMeta);
             gui.setItem(13, loading);
 
-            // 先開啟 GUI 顯示加載狀態
             player.openInventory(gui);
 
-            // 然後預加載數據並更新 GUI
             preloadBiomeData(player).thenRun(() -> {
-                // 需要在主線程上運行 GUI 更新
                 if (FoliaUtil.isFolia) {
                     player.getScheduler().run(plugin, (ignored) -> {
-                        // 只有當玩家仍然打開著 GUI 才更新
                         if (player.getOpenInventory().getTitle().equals(translateHexColorCodes("&0&l近十次的傳送紀錄"))) {
                             updateTpHistoryGUI(player, gui);
                         }
                     }, null);
                 } else {
                     Bukkit.getScheduler().runTask(plugin, () -> {
-                        // 只有當玩家仍然打開著 GUI 才更新
                         if (player.getOpenInventory().getTitle().equals(translateHexColorCodes("&0&l近十次的傳送紀錄"))) {
                             updateTpHistoryGUI(player, gui);
                         }
@@ -308,13 +295,9 @@ public class GuiListener implements Listener {
             return;
         }
 
-        // 已有緩存數據，直接更新 GUI
         updateTpHistoryGUI(player, gui);
     }
 
-    /**
-     * 使用緩存的生態域數據更新 GUI
-     */
     private void updateTpHistoryGUI(Player player, Inventory gui) {
         List<CachedTeleportData> cachedData = playerBiomeCache.getOrDefault(player.getUniqueId(), new ArrayList<>());
         int[] slots = {11, 12, 13, 14, 15, 20, 21, 22, 23, 24};
@@ -337,7 +320,6 @@ public class GuiListener implements Listener {
                             loc.getBlockZ())
             ));
 
-            // 設置說明文字
             List<String> lore = new ArrayList<>();
             lore.add(translateHexColorCodes("&7    "));
             lore.add(translateHexColorCodes(String.format("&7    世界：&f%s    ", translateWorldName(loc.getWorld().getName()))));
@@ -351,7 +333,6 @@ public class GuiListener implements Listener {
             gui.setItem(slots[i], item);
         }
 
-        // 開啟或更新物品欄
         if (player.getOpenInventory().getTitle().equals(translateHexColorCodes("&0&l近十次的傳送紀錄"))) {
             player.updateInventory();
         } else {
@@ -365,13 +346,11 @@ public class GuiListener implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
 
-        // 檢查是否為電梯傳送或觀察者傳送
         if (teleportManager.isElevatorTeleport(from, to) ||
                 event.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             return;
         }
 
-        // 檢查是否為相同位置
         if (from.getWorld().equals(to.getWorld()) &&
                 from.getBlockX() == to.getBlockX() &&
                 from.getBlockY() == to.getBlockY() &&
@@ -379,7 +358,6 @@ public class GuiListener implements Listener {
             return;
         }
 
-        // 檢查是否已存在相同位置的記錄
         List<TeleportRecord> history = teleportManager.getPlayerHistory(player.getUniqueId());
         boolean isDuplicate = history.stream().anyMatch(record -> {
             Location loc = record.getLocation();
@@ -407,7 +385,6 @@ public class GuiListener implements Listener {
 
         teleportManager.addTeleportRecord(player, from);
 
-        // 添加新記錄後，異步預加載其生態域數據
         Bukkit.getAsyncScheduler().runNow(TpHistory.getInstance(), (ignored) -> {
             this.preloadBiomeData(event.getPlayer());
         });
@@ -431,14 +408,12 @@ public class GuiListener implements Listener {
 
         if (clicked == null) return;
 
-        // 處理返回主選單按鈕
         if (event.getSlot() == 27 && clicked.getType() == Material.STICK) {
             player.closeInventory();
             player.performCommand("menu");
             return;
         }
 
-        // 處理傳送按鈕點擊
         int slot = event.getSlot();
         int index = -1;
 
