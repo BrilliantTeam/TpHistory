@@ -339,6 +339,7 @@ public class GuiListener implements Listener {
         });
 
         if (isDuplicate) {
+            /*
             TextComponent message1 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7您進行了傳送，但是此位置已在記錄中，"));
             TextComponent message2 = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7因此不會重複紀錄，點此查看#e6bbf6近期傳送紀錄&7。"));
             
@@ -351,6 +352,7 @@ public class GuiListener implements Listener {
                 
             player.spigot().sendMessage(message1);
             player.spigot().sendMessage(message2);
+            */
             return;
         }
         
@@ -360,11 +362,13 @@ public class GuiListener implements Listener {
             preloadBiomeData(player);
         });
         
+        /*
         TextComponent message = new TextComponent(translateHexColorCodes("&7｜&6系統&7｜&f飯娘：&7已記錄傳送前的位置，點此查看#e6bbf6近期傳送紀錄&7。"));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpb"));
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
             new ComponentBuilder(translateHexColorCodes("&7點擊後開啟近十次的傳送紀錄")).create()));
         player.spigot().sendMessage(message);
+        */
     }
     
     @EventHandler
