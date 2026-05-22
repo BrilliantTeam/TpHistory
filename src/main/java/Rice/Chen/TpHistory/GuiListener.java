@@ -1,7 +1,7 @@
 package Rice.Chen.TpHistory;
 
 import com.google.common.collect.ImmutableMap;
-import engineer.skyouo.arcfox.ReadOnlyPlayerTeleportEvent;
+import rice.chen.event.player.ReadOnlyPlayerTeleportEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
