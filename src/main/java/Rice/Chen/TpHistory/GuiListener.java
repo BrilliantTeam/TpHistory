@@ -385,7 +385,7 @@ public class GuiListener implements Listener {
         
         if (event.getSlot() == 27 && clicked.getType() == Material.STICK) {
             player.closeInventory();
-            player.performCommand("menu");
+            player.performCommand("gmp gui open 傳送功能.yml");
             return;
         }
         
