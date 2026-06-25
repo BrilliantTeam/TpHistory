@@ -129,7 +129,7 @@ public class GuiListener implements Listener {
             .put(Biome.OLD_GROWTH_BIRCH_FOREST, new BiomeInfo(Material.BIRCH_LOG, "&a原生樺木森林"))
             .put(Biome.DARK_FOREST, new BiomeInfo(Material.DARK_OAK_SAPLING, "&2黑森林"))
             .put(Biome.WINDSWEPT_FOREST, new BiomeInfo(Material.SPRUCE_SAPLING, "&2風蝕森林"))
-            .put(Biome.GROVE, new BiomeInfo(Material.POWDER_SNOW, "&f雪林"))
+            .put(Biome.GROVE, new BiomeInfo(Material.POWDER_SNOW_BUCKET, "&f雪林"))
             .put(Biome.CHERRY_GROVE, new BiomeInfo(Material.CHERRY_SAPLING, "&d櫻花樹林"))
 
             // 叢林生態域

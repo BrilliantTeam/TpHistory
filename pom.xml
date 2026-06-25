@@ -43,7 +43,6 @@
     </repositories>
 
     <dependencies>
-        <!-- 1.20.2 -->
         <dependency>
             <groupId>rice.chen.event.player</groupId>
             <artifactId>misteln-folia-api</artifactId>
@@ -54,7 +53,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
