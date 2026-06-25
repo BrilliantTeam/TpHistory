@@ -96,7 +96,7 @@ public class GuiListener implements Listener {
         // 平地生態域
         .put(Biome.PLAINS, new BiomeInfo(Material.GRASS_BLOCK, "&a平原"))
         .put(Biome.SUNFLOWER_PLAINS, new BiomeInfo(Material.SUNFLOWER, "&e向日葵平原"))
-        .put(Biome.MEADOW, new BiomeInfo(Material.GRASS, "&a草甸"))
+        .put(Biome.MEADOW, new BiomeInfo(Material.SHORT_GRASS, "&a草甸"))
         .put(Biome.SNOWY_PLAINS, new BiomeInfo(Material.SNOW_BLOCK, "&f雪原"))
         .put(Biome.SAVANNA, new BiomeInfo(Material.ACACIA_SAPLING, "&6莽原"))
         .put(Biome.SAVANNA_PLATEAU, new BiomeInfo(Material.ACACIA_LOG, "&6莽原高地"))
@@ -109,7 +109,7 @@ public class GuiListener implements Listener {
         .put(Biome.OLD_GROWTH_BIRCH_FOREST, new BiomeInfo(Material.BIRCH_LOG, "&a原生樺木森林"))
         .put(Biome.DARK_FOREST, new BiomeInfo(Material.DARK_OAK_SAPLING, "&2黑森林"))
         .put(Biome.WINDSWEPT_FOREST, new BiomeInfo(Material.SPRUCE_SAPLING, "&2風蝕森林"))
-        .put(Biome.GROVE, new BiomeInfo(Material.POWDER_SNOW, "&f雪林"))
+        .put(Biome.GROVE, new BiomeInfo(Material.POWDER_SNOW_BUCKET, "&f雪林"))
         .put(Biome.CHERRY_GROVE, new BiomeInfo(Material.CHERRY_SAPLING, "&d櫻花樹林"))
 
         // 叢林生態域
